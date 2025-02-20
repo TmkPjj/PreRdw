@@ -7,20 +7,24 @@ import os
 import torch
 import matplotlib.pyplot as plt
 
-# from depth_anything_v2.dpt import DepthAnythingV2
+
 from metric_depth.depth_anything_v2.dpt import DepthAnythingV2
 
+# generate depth map for images in the folder using the trained model
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Depth Anything V2')
-    
-    parser.add_argument('--img-path', type=str,default = '/data_share/jing/jing/pythons/Depth-Anything-V2-main/assets/booster_test.txt')
-    parser.add_argument('--input-size', type=int, default=518)
-    parser.add_argument('--outdir', type=str, default='./vis_depth/booster')
-    
+    parser.add_argument('--root_path', type=str,default = '/data_share/jing/jing/pythons/datasets/NTIRE/train/')
+    parser.add_argument('--img_path', type=str,default = './assets/booster_train.txt')
+    parser.add_argument('--input_size', type=int, default=518)
+
+    parser.add_argument('--vis_depth', type=str,default = './vis_depth/dv2_metric_ft')
+    parser.add_argument('--npy_depth', type=str,default = './npy_depth/dv2_metric_ft')
+
     parser.add_argument('--encoder', type=str, default='vitl', choices=['vits', 'vitb', 'vitl', 'vitg'])
     
-    parser.add_argument('--pred-only', dest='pred_only', action='store_true', help='only display the prediction')
+    parser.add_argument('--pred_only', dest='pred_only', action='store_true', help='only display the prediction')
     parser.add_argument('--grayscale', dest='grayscale', action='store_true', help='do not apply colorful palette')
+    parser.add_argument('--model_load', type=str, default='./checkpoints/depth_anything_v2_metric_hypersim_vitl.pth')
 
     args = parser.parse_args()
     
@@ -32,11 +36,12 @@ if __name__ == '__main__':
         'vitl': {'encoder': 'vitl', 'features': 256, 'out_channels': [256, 512, 1024, 1024]},
         'vitg': {'encoder': 'vitg', 'features': 384, 'out_channels': [1536, 1536, 1536, 1536]}
     }
-    # dict_all = torch.load('/data_share/jing/jing/pythons/NTIRE/our/experiment_models/midas-ft/depthv2_20000.pt')
-    model_dict = torch.load(f'/data_share/jing/jing/pythons/Depth-Anything-V2-main/checkpoints/depth_anything_v2_metric_hypersim_vitl.pth', map_location='cpu')
+
+    # create model
     depth_anything = DepthAnythingV2(**model_configs[args.encoder])
-    # depth_anything.load_state_dict({key[7:]: weight for key, weight in dict_all['model_state_dict'].items()})
+    model_dict = torch.load(args.model_load)
     depth_anything.load_state_dict(model_dict)
+    # if you fine tune the model using metric_depth training code, you can use the following code to load the model
     # depth_anything.load_state_dict({key[7:]: weight for key, weight in model_dict['model'].items()})
 
     depth_anything = depth_anything.to(DEVICE).eval()
@@ -45,8 +50,7 @@ if __name__ == '__main__':
         if args.img_path.endswith('txt'):
             with open(args.img_path, 'r') as f:
                 filenames_temp = f.read().splitlines()
-                root_path = "/data_share/jing/jing/pythons/datasets/NTIRE/test/" #"/data_share/jing/jing/pythons/datasets/NTIRE/train/"  # 替换为你的根路径
-                filenames = [os.path.join(root_path, line) for line in filenames_temp]  
+                filenames = [os.path.join(args.root_path, line) for line in filenames_temp]  
         else:
             filenames = [args.img_path]
     else:
@@ -59,7 +63,7 @@ if __name__ == '__main__':
         raw_image = cv2.imread(filename)
         depth = depth_anything.infer_image(raw_image, args.input_size)
         
-        output_file = os.path.join('/data_share/jing/jing/pythons/Depth-Anything-V2-main/outputs/dv2_metric_test',filenames_temp[k].rsplit('/', 2)[0])
+        output_file = os.path.join(args.npy_depth,filenames_temp[k].rsplit('/', 2)[0])
         if not os.path.exists(output_file):
             os.makedirs(output_file, exist_ok=True)
         np.save(os.path.join(output_file, os.path.splitext(os.path.basename(filenames_temp[k]))[0] + '.npy'), depth)
@@ -72,7 +76,7 @@ if __name__ == '__main__':
             depth = (cmap(depth)[:, :, :3] * 255)[:, :, ::-1].astype(np.uint8)
         
         
-        outdir = os.path.join('/data_share/jing/jing/pythons/Depth-Anything-V2-main/vis_depth/dv2_metric_test/',filenames_temp[k].rsplit('/', 2)[0])
+        outdir = os.path.join(args.vis_depth,filenames_temp[k].rsplit('/', 2)[0])
         if not os.path.exists(outdir):
             os.makedirs(outdir, exist_ok=True)
         if args.pred_only:
