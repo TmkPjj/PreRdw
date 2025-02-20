@@ -9,14 +9,15 @@ from util.utils import parse_dataset_txt, read_calib_xml
 import numpy as np
 import random
 
+# change the root path to the path of the dataset on your machine
 class Booster(Dataset):
-    def __init__(self, filelist_path, mode, size=(518, 518),baseline_factor=1000):
+    def __init__(self, filelist_path, mode, size=(518, 518),baseline_factor=1000,root_path = "/data_nvme/jing/NTIRE/train/"):
         self.brightness = (0.8, 1.2)
         self.contrast = (0.8, 1.2)
         self.saturation = (0.8, 1.2)
         self.hue = (-0.1, 0.1)
         self.baseline_factor = baseline_factor
-        self.root_path = "/data_nvme/jing/NTIRE/train/"
+        self.root_path = root_path
         dataset_dict = parse_dataset_txt(filelist_path)
         self.gt_fileslist = [os.path.join(self.root_path, f) for f in dataset_dict["gt_paths"]]
         self.image_fileslist = [os.path.join(self.root_path, f) for f in dataset_dict["image_paths"]]
@@ -29,8 +30,6 @@ class Booster(Dataset):
                 fx, baseline = read_calib_xml(os.path.join(self.root_path, calib_path))
                 self.focalslist.append(fx)
                 self.baselineslist.append(baseline)
-
-
         self.mode = mode
         self.size = size
 
@@ -48,7 +47,6 @@ class Booster(Dataset):
                 resize_method='lower_bound',
                 image_interpolation_method=cv2.INTER_CUBIC,
             ),
-            # ColorAug(prob=0.5),
             NormalizeImage(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
             PrepareForNet(),
         ])
@@ -78,6 +76,7 @@ class Booster(Dataset):
 
         sample = self.transform({'image': image, 'depth': depth})
         sample['image'] = torch.from_numpy(sample['image'])
+        
         # color_aug = transforms.ColorJitter(self.brightness, self.contrast, self.saturation, self.hue)
         # if random.random() > 0.5:
         #     sample['image'] = color_aug(sample['image'])
