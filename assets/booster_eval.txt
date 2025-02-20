@@ -1,0 +1,15 @@
+Desk/camera_00/0000.png
+Desk/camera_00/0001.png
+Desk/camera_00/0002.png
+Desk/camera_00/0003.png
+Desk/camera_00/0004.png
+Mirror3/camera_00/0000.png
+Mirror3/camera_00/0001.png
+Mirror3/camera_00/0002.png
+Mirror3/camera_00/0003.png
+Mirror3/camera_00/0004.png
+Sanitaries/camera_00/0000.png
+Sanitaries/camera_00/0001.png
+Sanitaries/camera_00/0002.png
+Sanitaries/camera_00/0003.png
+Sanitaries/camera_00/0004.png
