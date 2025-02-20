@@ -5,14 +5,7 @@ Our method is based on Depth Anything V2. By finetuning on the Booster training 
 
 ### Data Preparation
 ```
-|-data
-  |-tricky
-    |-test_tricky_nogt
-      |-Appliances
-      |-Balance
-        ...
-|-ckpt
-  |-weights
+wait for update
 ```
 
 ### Installation
