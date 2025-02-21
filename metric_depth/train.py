@@ -47,12 +47,12 @@ def main():
     
     logger = init_log('global', logging.INFO)
     logger.propagate = 0
-    
+    #设置分布式训练环境
     rank, world_size = setup_distributed(port=args.port)
     # now = datetime.now()
     # folder_path = os.path.join(args.save_path, now.strftime("%Y-%m-%d_%H-%M-%S"))  
 
-
+#主进程
     if rank == 0:
         all_args = {**vars(args), 'ngpus': world_size}
         logger.info('{}\n'.format(pprint.pformat(all_args)))
@@ -68,6 +68,7 @@ def main():
         trainset = Booster('dataset/splits/booster/train.txt', 'train', size=size)
     else:
         raise NotImplementedError
+        #分布式采样器
     trainsampler = torch.utils.data.distributed.DistributedSampler(trainset)
     trainloader = DataLoader(trainset, batch_size=args.bs, pin_memory=True, num_workers=4, drop_last=True, sampler=trainsampler)
     
@@ -99,7 +100,8 @@ def main():
                                                       output_device=local_rank, find_unused_parameters=True)
     
     criterion = ScaleAndShiftInvariantLoss().cuda(local_rank)
-    
+   #beta1 一阶矩估计和二阶矩估计的指数衰减率。
+   #weight_decay 是权重衰减（也称为 L2 正则化）系数
     optimizer = AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.999), weight_decay=0.01)
     
     total_iters = args.epochs * len(trainloader)
@@ -136,7 +138,7 @@ def main():
             total_loss += loss.item()
             
             iters = epoch * len(trainloader) + i
-            
+            #学习率衰减
             lr = args.lr * (1 - iters / total_iters) ** 0.9
             
             optimizer.param_groups[0]["lr"] = lr
@@ -172,7 +174,7 @@ def main():
             for k in results.keys():
                 results[k] += cur_results[k]
             nsamples += 1
-        
+        #同步进程
         torch.distributed.barrier()
         
         for k in results.keys():
