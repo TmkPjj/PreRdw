@@ -1,4 +1,4 @@
-from util.ensemble import ensemble_depth
+from metric_depth.util.ensemble import ensemble_depth
 import os
 import glob
 from tqdm import tqdm
