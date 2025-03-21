@@ -11,7 +11,7 @@ import random
 
 # change the root path to the path of the dataset on your machine
 class Booster(Dataset):
-    def __init__(self, filelist_path, mode, size=(518, 518),baseline_factor=1000,root_path = "/data_nvme/jing/NTIRE/train/"):
+    def __init__(self, filelist_path, mode, root_path, size=(518, 518), baseline_factor=1000):
         self.brightness = (0.8, 1.2)
         self.contrast = (0.8, 1.2)
         self.saturation = (0.8, 1.2)
@@ -71,6 +71,7 @@ class Booster(Dataset):
         gt[gt < fx * baseline / self.max_depth] = 0 # INVALID IF MORE THAN max_depth meters (very small disparity values)
 
         # if eval in depth, this is forward
+        # depth = gt
         depth = baseline * fx / gt
         depth[np.isinf(depth)] = 0
 

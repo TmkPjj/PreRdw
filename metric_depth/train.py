@@ -22,13 +22,12 @@ from util.dist_helper import setup_distributed
 from util.loss import SiLogLoss,ScaleAndShiftInvariantLoss,compute_scale_and_shift
 from util.metric import eval_depth
 from util.utils import init_log
-
 os.environ['TORCH_DISTRIBUTED_DEBUG'] = 'OFF'
 parser = argparse.ArgumentParser(description='Depth Anything V2 for Metric Depth Estimation')
 
 parser.add_argument('--encoder', default='vitl', choices=['vits', 'vitb', 'vitl', 'vitg'])
 parser.add_argument('--dataset', default='hypersim', choices=['hypersim', 'booster'])
-parser.add_argument('--img-size', default=742, type=int)
+parser.add_argument('--img-size', default=518, type=int)
 parser.add_argument('--min-depth', default=0.001, type=float)
 parser.add_argument('--max-depth', default=20, type=float)
 parser.add_argument('--epochs', default=120, type=int)
@@ -65,7 +64,7 @@ def main():
     if args.dataset == 'hypersim':
         trainset = Hypersim('dataset/splits/hypersim/train.txt', 'train', size=size)
     elif args.dataset == 'booster':
-        trainset = Booster('dataset/splits/booster/train.txt', 'train', size=size)
+        trainset = Booster('dataset/splits/booster/train.txt', 'train', root_path = "", size=size)
     else:
         raise NotImplementedError
     trainsampler = torch.utils.data.distributed.DistributedSampler(trainset)
