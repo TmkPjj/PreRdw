@@ -5,19 +5,13 @@ Our method is based on Depth Anything V2. By finetuning on the Booster training 
 
 ### Data Preparation
 ```
-wait for update
-```
-
-### Installation
-
-```bash
-wait for update
+Update the booster dataset path in the file
 ```
 
 ### Evaluate
 
 ```bash
-wait for update
+run run.py, ensemble_light.py round.py and filter.py in sequence
 ```
 
 
