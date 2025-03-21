@@ -41,7 +41,7 @@ if __name__ == '__main__':
     
     parser.add_argument('--pred_only', dest='pred_only', action='store_true', help='only display the prediction')
     parser.add_argument('--grayscale', dest='grayscale', action='store_true', help='do not apply colorful palette')
-    parser.add_argument('--model_load', type=str, default='ckpt/PrePostRDW')
+    parser.add_argument('--model_load', type=str, default='./ckpt/PrePostRDW.pth')
 
     args = parser.parse_args()
     
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     model_dict = torch.load(args.model_load)
     # depth_anything.load_state_dict(model_dict)
     # if you fine tune the model using metric_depth training code, you can use the following code to load the model
-    depth_anything.load_state_dict({key[7:]: weight for key, weight in model_dict['model'].items()})
+    depth_anything.load_state_dict({key[7:]: weight for key, weight in model_dict.items()})
 
     depth_anything = depth_anything.to(DEVICE).eval()
     
