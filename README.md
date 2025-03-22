@@ -4,17 +4,16 @@ Our method is based on Depth Anything V2. By finetuning on the Booster training 
 ## Usage
 
 ### Preparation
-```
-Update the booster dataset path in the file
-
 First, you need to download the pretrained [checkpoint](https://pan.baidu.com/s/1kME4xQJEbvUZUeAgxgQAPg?pwd=6789) to 'weight/'.
-
-```
+Then, update the booster test dataset path in run.py.
 
 ### Evaluate
 
-```bash
-run run.py, ensemble_light.py round.py and filter.py in sequence
+```python
+python run.py
+python ensemble_light.py 
+python round.py 
+python filter.py
 ```
 
 
