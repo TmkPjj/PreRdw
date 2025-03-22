@@ -41,7 +41,7 @@ if __name__ == '__main__':
     
     parser.add_argument('--pred_only', dest='pred_only', action='store_true', help='only display the prediction')
     parser.add_argument('--grayscale', dest='grayscale', action='store_true', help='do not apply colorful palette')
-    parser.add_argument('--model_load', type=str, default='./ckpt/PrePostRDW.pth')
+    parser.add_argument('--model_load', type=str, default='./ckpt/PreRdw.pth')
 
     args = parser.parse_args()
     
