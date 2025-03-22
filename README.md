@@ -3,9 +3,12 @@ Our method is based on Depth Anything V2. By finetuning on the Booster training 
 
 ## Usage
 
-### Data Preparation
+### Preparation
 ```
 Update the booster dataset path in the file
+
+First, you need to download the pretrained [checkpoint](https://pan.baidu.com/s/1kME4xQJEbvUZUeAgxgQAPg?pwd=6789) to 'weight/'.
+
 ```
 
 ### Evaluate
